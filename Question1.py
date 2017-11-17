@@ -24,3 +24,25 @@ frames=[soybean,sunflower]
 
 df=pd.concat(frames)
 df.replace(['soybean','sunflower'],[0,1],inplace=True)
+
+def null(p,obs):
+    B0=p[0]
+    sigma=p[1]
+    expected=B0
+    nll=-1*norm(expected,sigma).logpdf(obs.weight).sum()
+    return nll
+
+def alt(p,obs):
+    B0=p[0]
+    B1=p[1]
+    sigma=p[2]
+    expected=B0+B1*obs.feed
+    nll=-1*norm(expected,sigma).logpdf(obs.weight).sum()
+
+initVals=numpy.array([1,1,1])
+
+fitNull=minimize(null,initVals,method="Nelder-Mead",options={'disp':True},args=df)
+fitAlt=minimize(alt,initVals,method="Nelder-Mead",options={'disp':True},args=df)
+
+print(fitNull.x)
+print(fitAlt.x)
