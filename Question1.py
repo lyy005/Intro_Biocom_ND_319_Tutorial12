@@ -1,5 +1,8 @@
+import numpy
 import pandas
 from plotnine import *
+from scipy.optimize import minimize
+from scipy.stats import norm
 
 weights=pandas.read_csv("chickwts.txt", header=0, sep=",")
 
@@ -16,3 +19,8 @@ g=g+geom_point(soybean, aes(x='feed',y='weight'))+theme_classic()
 g=g+geom_point(sunflower, aes(x='feed',y='weight'))+theme_classic()
 g=g+geom_point(meatmeal, aes(x='feed',y='weight'))+theme_classic()
 g=g+geom_point(casein, aes(x='feed',y='weight'))+theme_classic()
+
+frames=[soybean,sunflower]
+
+df=pd.concat(frames)
+df.replace(['soybean','sunflower'],[0,1],inplace=True)
