@@ -46,3 +46,34 @@ fitAlt=minimize(alt,initVals,method="Nelder-Mead",options={'disp':True},args=df)
 
 print(fitNull.x)
 print(fitAlt.x)
+########################
+#null hypothesis likelihood equation
+def null(p,obs):
+    B0=p[0]
+    sigma=p[1]
+    expected=B0
+    nll=-1*norm(expected,sigma).logpdf(obs.weight).sum()
+    return nll
+
+#Alternative hypothesis likelihood equation
+def alt(p,obs):
+    B0=p[0]
+    B1=p[1]
+    sigma=p[2]
+    expected=B0+B1*obs.feed
+    nll=-1*norm(expected,sigma).logpdf(obs.weight).sum()
+    return nll
+
+#estimaitng parameters by minimizing the nll 
+initialVals1=numpy.array([1,1,1])
+
+fitNull=minimize(null,initialVals1, method="Nelder-Mead",options={'disp': True}, args=df)
+fitAlt=minimize(alt,initialVals1, method="Nelder-Mead",options={'disp': True}, args=df)
+
+print(fitNull.x)
+print(fitAlt.x)
+
+from scipy.stats import chi2
+D=(2*(fitNull.fun-fitAlt.fun))
+chi2feed=(1-chi2.cdf(x=D,df=1))
+print(chi2feed)
